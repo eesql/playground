@@ -2,9 +2,9 @@ name := "playground" // project name
 version := "0.1-SNAPSHOT"
 
 libraryDependencies += "org.apache.spark" %% "spark-core" % "1.6.0" % "provided"
-//libraryDependencies += "org.apache.hbase" % "hbase-client" % "1.1.0"
-//libraryDependencies += "org.apache.hbase" % "hbase-common" % "1.1.0"
-//libraryDependencies += "org.apache.hbase" % "hbase-server" % "1.1.0"
+libraryDependencies += "org.apache.hbase" % "hbase-client" % "1.1.0"
+libraryDependencies += "org.apache.hbase" % "hbase-common" % "1.1.0"
+libraryDependencies += "org.apache.hbase" % "hbase-server" % "1.1.0"
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "1.6.0" % "provided"
 
 
