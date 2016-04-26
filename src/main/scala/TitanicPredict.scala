@@ -1,3 +1,5 @@
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.mllib.tree.RandomForest
@@ -8,7 +10,9 @@ import org.apache.spark.mllib.linalg.Vectors
   * Created by chad on 4/9/16.
   */
 
-object TitanicPredict {
+object TitanicPredict  {
+
+  //val logger = Logger(LoggerFactory.getLogger("name"))
 
   /**
     * Transform RDD of strings into RDD of labeled points
@@ -68,6 +72,9 @@ object TitanicPredict {
     val conf = new SparkConf().setAppName("TitanicPredictionExample")
     val sc   = new SparkContext(conf)
 
+    // Logback logger
+    val logger = Logger(LoggerFactory.getLogger(this.getClass))
+
     val trainData = normData( swapData( sc.textFile("resources/train.csv") ) )
     //trainData.foreach(println(_))
 
@@ -84,10 +91,22 @@ object TitanicPredict {
     val tData = toLabeledPoint(trainData, ",")
 
     // for testing
-    val splits = tData.randomSplit(Array(0.9, 0.1))
-    val model = RandomForest.trainClassifier(splits(1), numClasses, cateFeaturesInfo,
+    val splits = tData.randomSplit(Array(0.8, 0.2))
+    val (ttData, eData) = ( splits(0), splits(1) )
+    val model = RandomForest.trainClassifier(ttData, numClasses, cateFeaturesInfo,
       numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
 
+    // Evaluation process
+    val labelAndPreds = eData.map{ point =>
+      val prediction = model.predict(point.features)
+
+      (point.label, prediction)
+    }
+    val testErr = labelAndPreds.filter(r => r._1 != r._2 ).count.toDouble / eData.count()
+
+    println("#####################################Test Error = " + testErr)
+    //logger.info("++++++++++++++++++++++++++++++++++++++++" + testErr.toString)
+    //println("Learned classification forest model:\n" + model.toDebugString)
 
     model.save(sc, "target/tmp/titanicModel")
     sc.stop()
