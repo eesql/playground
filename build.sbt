@@ -25,6 +25,10 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
 
 libraryDependencies += "net.liftweb" %% "lift-json" % "2.6.2"
 
+// Add Scalatest support
+libraryDependencies += "org.scalactic" %% "scalactic" % "2.2.6"
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+
 
 assemblyMergeStrategy in assembly := {
   case PathList(ps @ _*) if ps.last endsWith ".class" => MergeStrategy.first
